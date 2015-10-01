@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtrMonitorCore", "DtrMonito
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtrFileManageLib", "DtrFileManageLib\DtrFileManageLib.csproj", "{27EE2B59-0454-4F0C-923D-A2ED195B4AB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtrFileManageLibIntegrationTests", "DtrFileManageLibIntegrationTests\DtrFileManageLibIntegrationTests.csproj", "{50847AEC-DD73-4D15-9FE1-076E2F647036}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{27EE2B59-0454-4F0C-923D-A2ED195B4AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27EE2B59-0454-4F0C-923D-A2ED195B4AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27EE2B59-0454-4F0C-923D-A2ED195B4AB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50847AEC-DD73-4D15-9FE1-076E2F647036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50847AEC-DD73-4D15-9FE1-076E2F647036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50847AEC-DD73-4D15-9FE1-076E2F647036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50847AEC-DD73-4D15-9FE1-076E2F647036}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
