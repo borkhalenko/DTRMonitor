@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DtrFileManageLib;
+using System.IO;
+using System.ServiceModel;
 
-namespace DtrFileManageLibIntegrationTests {
+namespace DtrMonitorCoreIntegrationTests {
     class Program {
         static void Main(string[] args) {
-            FSMonitor monitor = FSMonitor.GetInstance("C:/test");
-            monitor.StartWatch();
-            System.Threading.Thread.Sleep(10000000);
+            Console.WriteLine("****** Service started.********");
+            using (ServiceHost serviceHost = new ServiceHost(typeof(DtrMonitorCore.FileTransferService))) {
+                serviceHost.Open();
+                Console.ReadKey();
+            }
         }
     }
 }

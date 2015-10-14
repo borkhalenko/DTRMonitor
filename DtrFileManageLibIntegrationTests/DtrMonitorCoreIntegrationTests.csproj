@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,12 +48,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DtrFileManageLib\DtrFileManageLib.csproj">
       <Project>{27ee2b59-0454-4f0c-923d-a2ed195b4ab4}</Project>
       <Name>DtrFileManageLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DtrMonitorCore\DtrMonitorCore.csproj">
+      <Project>{cb82d98e-0156-4a5f-9166-1cfe812d1b85}</Project>
+      <Name>DtrMonitorCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,13 +7,13 @@ using System.ServiceModel;
 
 namespace DtrMonitorCore {
     [ServiceContract]
-    public interface IDtrMonitorService {
+    public interface IFileTransferService {
         [OperationContract]
-        RemoteFileInfo isNext();
+        void RemoveFileFromServer(RemoteFileInfo fi);
         [OperationContract]
-        RemoteFileStream DownloadFile(RemoteFileInfo fi);
+        RemoteFileStream ReceiveNextFromServer();
         [OperationContract]
-        RemoteFileInfo UploadFile(RemoteFileStream fs);
+        RemoteFileInfo SendNextToServer(RemoteFileStream fs);
     }
 
     [MessageContract]
@@ -24,14 +24,14 @@ namespace DtrMonitorCore {
         public string fileName;
         [MessageBodyMember]
         public string fileHash;
+        [MessageBodyMember]
+        public Int64 length;
     }
 
     [MessageContract]
     public class RemoteFileStream {
         [MessageHeader(MustUnderstand = true)]
         public RemoteFileInfo fileInfo;
-        [MessageHeader(MustUnderstand = true)]
-        public UInt64 length;
         [MessageBodyMember]
         public System.IO.Stream FileByteStream;
         public void Dispose() {

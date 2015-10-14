@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="FileAttributes.cs" />
     <Compile Include="FSMonitor.cs" />
+    <Compile Include="IFSReader.cs" />
+    <Compile Include="IFSWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
