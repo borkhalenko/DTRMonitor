@@ -24,19 +24,17 @@ namespace DtrMonitorCore {
             fsWatcher.EnableRaisingEvents = true;
         }
 
-        public void RemoveFileFromServer(RemoteFileInfo fi) {
-            string fileToRemove = Path.Combine(uploadPath, fi.fileName);
+        public void RemoveFileFromServer(string fileName) {
+            string fileToRemove = Path.Combine(uploadPath, fileName);
             if (File.Exists(fileToRemove)) File.Delete(Path.Combine(uploadPath, fileToRemove));
             if (fileQueue.Peek() == fileToRemove) fileQueue.Dequeue();
         }
 
-        public RemoteFileStream ReceiveNextFromServer() {
-            RemoteFileStream rfStream = new RemoteFileStream();
-            RemoteFileInfo rfInfo = new RemoteFileInfo();
+        public RemoteFileData ReceiveNextFromServer() {
+            RemoteFileData rfData = new RemoteFileData();
             if (fileQueue.Count == 0) {
-                rfInfo.fileExists = false;
-                rfStream.fileInfo = rfInfo;
-                return rfStream;
+                rfData.fileExists = false;
+                return rfData;
             }
             string nextFile = fileQueue.Peek();
             if (File.Exists(nextFile) == false) {
@@ -45,47 +43,37 @@ namespace DtrMonitorCore {
                 fileQueue.Dequeue();
             }
             FileInfo fInfo = new FileInfo(nextFile);
-            rfInfo.fileExists = true;
-            rfInfo.fileName = fInfo.Name;
-            rfInfo.fileHash = fInfo.ComputeHashSum();
-            rfInfo.length = fInfo.Length;
-            rfStream.FileByteStream = new FileStream(nextFile, FileMode.Open, FileAccess.Read);
-            rfStream.fileInfo = rfInfo;
-            return rfStream;
+            rfData.fileExists = true;
+            rfData.fileName = fInfo.Name;
+            rfData.fileHash = fInfo.ComputeHashSum();
+            rfData.length = fInfo.Length;
+            rfData.FileByteStream = new FileStream(nextFile, FileMode.Open, FileAccess.Read);
+            return rfData;
         }
 
-        public RemoteFileInfo SendNextToServer(RemoteFileStream fs) {
+        public RemoteFileHash SendNextToServer(RemoteFileData fd) {
             try {
                 if (!Directory.Exists(downloadPath)) Directory.CreateDirectory(downloadPath);
-                string newFile = Path.Combine(downloadPath, fs.fileInfo.fileName);
+                string newFile = Path.Combine(downloadPath, fd.fileName);
                 if (File.Exists(newFile)) File.Delete(newFile);
                 byte[] buffer = new byte[chunkSize];
                 using (FileStream writeStream = new FileStream(newFile, FileMode.CreateNew, FileAccess.Write)) {
                     do {
-                        int bytesRead = fs.FileByteStream.Read(buffer, 0, chunkSize);
+                        int bytesRead = fd.FileByteStream.Read(buffer, 0, chunkSize);
                         if (bytesRead == 0) break;
                         writeStream.Write(buffer, 0, bytesRead);
                     } while (true);
                     writeStream.Close();
                 }
-                RemoteFileInfo rfInfo = new RemoteFileInfo();
-                if (File.Exists(newFile)) {
-                    FileInfo fInfo = new FileInfo(newFile);
-                    rfInfo.fileExists = true;
-                    rfInfo.fileHash = fInfo.ComputeHashSum();
-                    rfInfo.fileName = fInfo.Name;
-                    rfInfo.length = fInfo.Length;
-                }
-                else {
-                    rfInfo.fileExists = false;
-                }
-                return rfInfo;
+                RemoteFileHash hash = new RemoteFileHash();
+                hash.fileHash = new FileInfo(newFile).ComputeHashSum();
+                return hash;
             }
             catch (UnauthorizedAccessException e) {
                 Console.WriteLine("Error: Application doesn't have the required perrmissions to the folder \"" + downloadPath + "\". Exception message: " + e.Message);
-                RemoteFileInfo rfInfo = new RemoteFileInfo();
-                rfInfo.fileExists = false;
-                return rfInfo;
+                RemoteFileHash hash = new RemoteFileHash();
+                hash.fileHash = String.Empty;
+                return hash;
             }
         }
 

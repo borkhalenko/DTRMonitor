@@ -9,29 +9,29 @@ namespace DtrMonitorCore {
     [ServiceContract]
     public interface IFileTransferService {
         [OperationContract]
-        void RemoveFileFromServer(RemoteFileInfo fi);
+        void RemoveFileFromServer(string fileName);
         [OperationContract]
-        RemoteFileStream ReceiveNextFromServer();
+        RemoteFileData ReceiveNextFromServer();
         [OperationContract]
-        RemoteFileInfo SendNextToServer(RemoteFileStream fs);
+        RemoteFileHash SendNextToServer(RemoteFileData fData);
     }
 
     [MessageContract]
-    public class RemoteFileInfo {
-        [MessageBodyMember]
-        public bool fileExists;
-        [MessageBodyMember]
-        public string fileName;
+    public class RemoteFileHash {
         [MessageBodyMember]
         public string fileHash;
-        [MessageBodyMember]
-        public Int64 length;
     }
 
     [MessageContract]
-    public class RemoteFileStream {
-        [MessageHeader(MustUnderstand = true)]
-        public RemoteFileInfo fileInfo;
+    public class RemoteFileData {
+        //[MessageHeader(MustUnderstand = true)]
+        public bool fileExists;
+        //[MessageHeader(MustUnderstand = true)]
+        public string fileName;
+        //[MessageHeader(MustUnderstand = true)]
+        public string fileHash;
+        //[MessageHeader(MustUnderstand = true)]
+        public Int64 length;
         [MessageBodyMember]
         public System.IO.Stream FileByteStream;
         public void Dispose() {
