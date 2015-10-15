@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="FileTransferService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="BasicHttpBinding_IFileTransferService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:8080/FileTransferService?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8080/FileTransferService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8080/FileTransferService?xsd=xsd2" namespace="http://schemas.microsoft.com/Message" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IFileTransferService_hasNext_InputMessage">
+    <wsdl:part name="parameters" element="tns:hasNext" />
+  </wsdl:message>
+  <wsdl:message name="IFileTransferService_hasNext_OutputMessage">
+    <wsdl:part name="parameters" element="tns:hasNextResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileTransferService_RemoveFileFromServer_InputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveFileFromServer" />
+  </wsdl:message>
+  <wsdl:message name="IFileTransferService_RemoveFileFromServer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveFileFromServerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileTransferService_ReceiveNextFromServer_InputMessage" />
+  <wsdl:message name="RemoteFileData">
+    <wsdl:part name="parameters" element="tns:RemoteFileData" />
+  </wsdl:message>
+  <wsdl:message name="RemoteFileData_Headers">
+    <wsdl:part name="fileHash" element="tns:fileHash" />
+    <wsdl:part name="fileName" element="tns:fileName" />
+    <wsdl:part name="length" element="tns:length" />
+  </wsdl:message>
+  <wsdl:message name="RemoteFileHash">
+    <wsdl:part name="parameters" element="tns:RemoteFileHash" />
+  </wsdl:message>
+  <wsdl:portType name="IFileTransferService">
+    <wsdl:operation name="hasNext">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileTransferService/hasNext" message="tns:IFileTransferService_hasNext_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileTransferService/hasNextResponse" message="tns:IFileTransferService_hasNext_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveFileFromServer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileTransferService/RemoveFileFromServer" message="tns:IFileTransferService_RemoveFileFromServer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileTransferService/RemoveFileFromServerResponse" message="tns:IFileTransferService_RemoveFileFromServer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ReceiveNextFromServer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileTransferService/ReceiveNextFromServer" message="tns:IFileTransferService_ReceiveNextFromServer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileTransferService/ReceiveNextFromServerResponse" name="RemoteFileData" message="tns:RemoteFileData" />
+    </wsdl:operation>
+    <wsdl:operation name="SendNextToServer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileTransferService/SendNextToServer" name="RemoteFileData" message="tns:RemoteFileData" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileTransferService/SendNextToServerResponse" name="RemoteFileHash" message="tns:RemoteFileHash" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IFileTransferService" type="tns:IFileTransferService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_IFileTransferService_policy" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="hasNext">
+      <soap:operation soapAction="http://tempuri.org/IFileTransferService/hasNext" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveFileFromServer">
+      <soap:operation soapAction="http://tempuri.org/IFileTransferService/RemoveFileFromServer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReceiveNextFromServer">
+      <soap:operation soapAction="http://tempuri.org/IFileTransferService/ReceiveNextFromServer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="RemoteFileData">
+        <soap:header message="tns:RemoteFileData_Headers" part="fileHash" use="literal" />
+        <soap:header message="tns:RemoteFileData_Headers" part="fileName" use="literal" />
+        <soap:header message="tns:RemoteFileData_Headers" part="length" use="literal" />
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendNextToServer">
+      <soap:operation soapAction="http://tempuri.org/IFileTransferService/SendNextToServer" style="document" />
+      <wsdl:input name="RemoteFileData">
+        <soap:header message="tns:RemoteFileData_Headers" part="fileHash" use="literal" />
+        <soap:header message="tns:RemoteFileData_Headers" part="fileName" use="literal" />
+        <soap:header message="tns:RemoteFileData_Headers" part="length" use="literal" />
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="RemoteFileHash">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FileTransferService">
+    <wsdl:port name="BasicHttpBinding_IFileTransferService" binding="tns:BasicHttpBinding_IFileTransferService">
+      <soap:address location="http://localhost:8080/FileTransferService/mex" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

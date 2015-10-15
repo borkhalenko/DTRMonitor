@@ -9,6 +9,8 @@ namespace DtrMonitorCore {
     [ServiceContract]
     public interface IFileTransferService {
         [OperationContract]
+        bool hasNext();
+        [OperationContract]
         void RemoveFileFromServer(string fileName);
         [OperationContract]
         RemoteFileData ReceiveNextFromServer();
@@ -23,21 +25,19 @@ namespace DtrMonitorCore {
     }
 
     [MessageContract]
-    public class RemoteFileData {
-        //[MessageHeader(MustUnderstand = true)]
-        public bool fileExists;
-        //[MessageHeader(MustUnderstand = true)]
+    public class RemoteFileData: IDisposable {
+        [MessageHeader(MustUnderstand = true)]
         public string fileName;
-        //[MessageHeader(MustUnderstand = true)]
+        [MessageHeader(MustUnderstand = true)]
         public string fileHash;
-        //[MessageHeader(MustUnderstand = true)]
+        [MessageHeader(MustUnderstand = true)]
         public Int64 length;
-        [MessageBodyMember]
-        public System.IO.Stream FileByteStream;
+        [MessageBodyMember(Order = 1)]
+        public System.IO.Stream fileByteStream;
         public void Dispose() {
-            if (FileByteStream != null) {
-                FileByteStream.Close();
-                FileByteStream = null;
+            if (fileByteStream != null) {
+                fileByteStream.Close();
+                fileByteStream = null;
             }
         }
     }

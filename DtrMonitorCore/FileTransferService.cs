@@ -12,6 +12,7 @@ namespace DtrMonitorCore {
         private const int chunkSize = 2048;
         private Queue<string> fileQueue = new Queue<string>();
         private FileSystemWatcher fsWatcher = new FileSystemWatcher();
+        private string lastRemovedFile=String.Empty;
 
         public FileTransferService(): this("C:\\test\\Server\\Download\\", "C:\\test\\Server\\Upload\\") { }
 
@@ -21,19 +22,28 @@ namespace DtrMonitorCore {
             ScanUploadPath();
             fsWatcher.Path = uploadPath;
             fsWatcher.Created += new FileSystemEventHandler(AddedNewFile);
+            fsWatcher.Deleted += new FileSystemEventHandler(DeleteFile);
             fsWatcher.EnableRaisingEvents = true;
+        }
+
+        public bool hasNext() {
+            if (fileQueue.Count > 0)
+                return true;
+            return false;
         }
 
         public void RemoveFileFromServer(string fileName) {
             string fileToRemove = Path.Combine(uploadPath, fileName);
             if (File.Exists(fileToRemove)) File.Delete(Path.Combine(uploadPath, fileToRemove));
             if (fileQueue.Peek() == fileToRemove) fileQueue.Dequeue();
+            lastRemovedFile = fileToRemove;
         }
 
         public RemoteFileData ReceiveNextFromServer() {
+            Console.WriteLine("ReceiveNextFromServer called");
             RemoteFileData rfData = new RemoteFileData();
             if (fileQueue.Count == 0) {
-                rfData.fileExists = false;
+                rfData.fileName = String.Empty;
                 return rfData;
             }
             string nextFile = fileQueue.Peek();
@@ -43,11 +53,10 @@ namespace DtrMonitorCore {
                 fileQueue.Dequeue();
             }
             FileInfo fInfo = new FileInfo(nextFile);
-            rfData.fileExists = true;
             rfData.fileName = fInfo.Name;
             rfData.fileHash = fInfo.ComputeHashSum();
             rfData.length = fInfo.Length;
-            rfData.FileByteStream = new FileStream(nextFile, FileMode.Open, FileAccess.Read);
+            rfData.fileByteStream = new FileStream(nextFile, FileMode.Open, FileAccess.Read);
             return rfData;
         }
 
@@ -59,7 +68,7 @@ namespace DtrMonitorCore {
                 byte[] buffer = new byte[chunkSize];
                 using (FileStream writeStream = new FileStream(newFile, FileMode.CreateNew, FileAccess.Write)) {
                     do {
-                        int bytesRead = fd.FileByteStream.Read(buffer, 0, chunkSize);
+                        int bytesRead = fd.fileByteStream.Read(buffer, 0, chunkSize);
                         if (bytesRead == 0) break;
                         writeStream.Write(buffer, 0, bytesRead);
                     } while (true);
@@ -78,14 +87,14 @@ namespace DtrMonitorCore {
         }
 
         private void ScanUploadPath() {
-            DirectoryInfo dirInfo = new DirectoryInfo(downloadPath);
+            DirectoryInfo dirInfo = new DirectoryInfo(uploadPath);
             try {
                 foreach (var file in dirInfo.GetFiles().OrderBy(f => f.CreationTime)) {
                     fileQueue.Enqueue(file.FullName);
                 }
             }
             catch (DirectoryNotFoundException e) {
-                Console.WriteLine("Error: Directory \"" + downloadPath + "\" not found. Exception message: " + e.Message);
+                Console.WriteLine("Error: Directory \"" + uploadPath + "\" not found. Exception message: " + e.Message);
             }
         }
 
@@ -93,5 +102,11 @@ namespace DtrMonitorCore {
             fileQueue.Enqueue(e.FullPath);
         }
 
+        private void DeleteFile(object source, FileSystemEventArgs e) {
+            if (e.FullPath != lastRemovedFile) {
+                fileQueue.Clear();
+                ScanUploadPath();
+            }
+        }
     }
 }
